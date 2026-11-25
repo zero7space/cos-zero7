@@ -1,18 +1,63 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: zero7-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zero7_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-zero7_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zero7_crm_prod_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zero7_admin} -d ${POSTGRES_DB:-zero7_crm}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   cos-theta-app:
     build: .
     container_name: cos-theta-server
     restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - "80:8000"
       - "8000:8000"
     environment:
       - PORT=8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zero7_admin}:${POSTGRES_PASSWORD:-zero7_crm_prod_secret}@postgres:5432/${POSTGRES_DB:-zero7_crm}
+      - AUTO_MIGRATE_SQLITE_TO_POSTGRES=${AUTO_MIGRATE_SQLITE_TO_POSTGRES:-0}
+      - APP_DOMAIN=${APP_DOMAIN:-cos.zero7.space}
+      - ZERO7_ROOT_DOMAIN=${ZERO7_ROOT_DOMAIN:-zero7.space}
+      - JWT_SECRET=${JWT_SECRET:-}
       - GITHUB_TOKEN=${GITHUB_TOKEN:-}
-      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL:-}
-      - AI_API_BASE=http://168.144.91.0:8080/v1
-      - AI_API_KEY=sk-bd99f718ae7d4f35bb4ecc22c1e5780c
+      - HOSTINGER_API_TOKEN=${HOSTINGER_API_TOKEN:-}
+      - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY:-}
+      - META_PAGE_ACCESS_TOKEN=${META_PAGE_ACCESS_TOKEN:-}
+      - META_PAGE_ID=${META_PAGE_ID:-1256505504219421}
+      - META_VERIFY_TOKEN=${META_VERIFY_TOKEN:-zero7_meta_verify_2026}
+      - AI_API_BASE=${AI_API_BASE:-http://168.144.91.0:8080/v1}
+      - AI_API_KEY=${AI_API_KEY:-sk-bd99f718ae7d4f35bb4ecc22c1e5780c}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://100.101.21.96:20128/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-8ed5097214e7accd-138ead-df38f3ce}
+      - ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL:-http://100.101.21.96:20128}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-sk-8ed5097214e7accd-138ead-df38f3ce}
+      - OMNIROUTE_PRIMARY_URL=${OMNIROUTE_PRIMARY_URL:-http://100.101.21.96:20128/v1}
+      - OMNIROUTE_LAN_URL=${OMNIROUTE_LAN_URL:-http://192.168.1.11:20128/v1}
+      - OMNIROUTE_TUNNEL_URL=${OMNIROUTE_TUNNEL_URL:-https://conditioning-baskets-vip-christ.trycloudflare.com/v1}
+      - OMNIROUTE_API_KEY=${OMNIROUTE_API_KEY:-sk-8ed5097214e7accd-138ead-df38f3ce}
     volumes:
+      - ./recordings:/app/recordings
+      - ./backups:/app/backups
       - ./cos_theta_data:/app/data
+      - ./zero7_crm.db:/app/zero7_crm.db
+
+volumes:
+  postgres_data:
+    driver: local

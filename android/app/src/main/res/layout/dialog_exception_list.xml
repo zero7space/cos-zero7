@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/card_bg"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Numbers to Exclude"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Calls to or from these numbers are not recorded or synced to CRM."
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <!-- Add Number Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/etNewExceptionNumber"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:paddingHorizontal="12dp"
+            android:hint="Enter phone number (+91...)"
+            android:inputType="phone"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddException"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginStart="8dp"
+            android:text="+ Add"
+            android:textColor="@color/text_primary"
+            app:backgroundTint="@color/header_surface"
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="12dp"
+        android:background="@color/card_stroke" />
+
+    <!-- Excluded List -->
+    <TextView
+        android:id="@+id/tvExceptionsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Current Excluded Numbers (0):"
+        android:textColor="@color/text_primary"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvExceptions"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/tvNoExceptions"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="No numbers excluded yet."
+        android:textColor="@color/text_hint"
+        android:textSize="12sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="12dp"
+        android:background="@color/card_stroke" />
+
+    <!-- Engine Settings Link -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOpenRecorderEngine"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:text="Manage 2-Way Audio Engine"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        app:cornerRadius="8dp"
+        app:strokeColor="@color/card_stroke"
+        app:strokeWidth="1dp" />
+
+</LinearLayout>

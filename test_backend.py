@@ -104,21 +104,26 @@ def run_tests():
     assert res.json()["stage"] == "negotiation"
     print(f"[PASS] 9. Updated deal stage to negotiation")
 
-    # 10. Login Member (Shailesh)
-    res = client.post("/api/auth/login", json={"email": "shailesh@zero7.space", "password": "member123"})
+    # 10. Login Member (RBAC test)
+    res = client.post("/api/auth/login", json={"email": "test_member@zero7.space", "password": "member123"})
     if res.status_code != 200:
-        res = client.post("/api/auth/login", json={"email": "shailesh@zero7.in", "password": "member123"})
+        test_member = {"name": "Test Member", "email": "test_member@zero7.space", "password": "member123", "role": "member"}
+        client.post("/api/users", json=test_member, headers=admin_headers)
+        res = client.post("/api/auth/login", json={"email": "test_member@zero7.space", "password": "member123"})
     assert res.status_code == 200
     member_token = res.json()["token"]
     member_headers = {"Authorization": f"Bearer {member_token}"}
-    print("[PASS] 10. Member login (Shailesh)")
+    me_res = client.get("/api/auth/me", headers=member_headers)
+    assert me_res.json()["role"] == "member"
+    member_user_id = me_res.json()["id"]
+    print(f"[PASS] 10. Member login ({me_res.json()['name']} - {me_res.json()['role']})")
 
     # 11. Member only sees assigned leads
     res = client.get("/api/leads", headers=member_headers)
     assert res.status_code == 200
     member_leads = res.json()
     for l in member_leads:
-        assert l["assigned_to"] == res.json()[0]["assigned_to"]
+        assert l["assigned_to"] == member_user_id
     print(f"[PASS] 11. Role separation verified: Member sees {len(member_leads)} assigned leads")
 
     # 12. Meta Ads Webhook with City & Temperature
@@ -271,8 +276,98 @@ def run_tests():
     assert lead_res.json()["channel_data"] is None
     print(f"[PASS] 21. Zero-clutter guarantee: Manual lead has channel_data = None")
 
-    print("\nALL 21 TESTS PASSED PERFECTLY!")
+    # 22. Prototype Rep Context API (GET / POST)
+    rep_context_payload = {
+        "primary_workflow": "Dispatch and Fleet Tracking",
+        "key_screens": ["Live Map", "Driver Assigned Modal", "Invoice Export"],
+        "tactical_notes": "Emphasize 1-click WhatsApp driver assignment during demo.",
+        "target_viewport": "desktop",
+        "visual_style": "zero7_dark"
+    }
+    res = client.post(f"/api/leads/{man_lead_id}/prototype-rep-context", json=rep_context_payload, headers=admin_headers)
+    assert res.status_code == 200 and res.json()["status"] == "success"
+    assert res.json()["rep_context"]["primary_workflow"] == "Dispatch and Fleet Tracking"
+    
+    get_rep_res = client.get(f"/api/leads/{man_lead_id}/prototype-rep-context", headers=admin_headers)
+    assert get_rep_res.status_code == 200
+    assert get_rep_res.json()["rep_context"]["tactical_notes"] == "Emphasize 1-click WhatsApp driver assignment during demo."
+    print(f"[PASS] 22. Prototype rep tactical context saved & retrieved via API")
+
+    # 23. DataPillResolver with @rep.context & auto Turn-0 Dossier
+    from backend.agents.pill_resolver import DataPillResolver
+    resolved_rep = DataPillResolver.resolve_prompt_pills(man_lead_id, "Build prototype for @rep.context now")
+    assert "Dispatch and Fleet Tracking" in resolved_rep["resolved_prompt"]
+    assert "Live Map" in resolved_rep["resolved_prompt"]
+    
+    resolved_full = DataPillResolver.resolve(man_lead_id, "Generate complete MVP app")
+    assert "=== CLIENT EXECUTIVE DOSSIER" in resolved_full
+    assert "Patel Logistics" in resolved_full
+    print(f"[PASS] 23. DataPillResolver verified (@rep.context & auto Turn-0 Dossier)")
+
+    # 24. Worker Heartbeat and Device Metadata registration
+    hb_payload = {
+        "worker_id": "FIZZY_abhijeet",
+        "machine_name": "FIZZY",
+        "user_email": "abhijeet@zero7.space",
+        "user_name": "Abhijeet",
+        "os_info": "Windows-11",
+        "metadata": {"version": "2.4.0", "status": "online"}
+    }
+    hb_res = client.post("/api/agent/worker/heartbeat", json=hb_payload)
+    assert hb_res.status_code == 200
+    st_res = client.get("/api/agent/worker/status")
+    assert st_res.status_code == 200
+    # 25. OmniRoute Multi-Tier Model Resolution & Models Catalog API
+    from backend.ai.client import resolve_model_name, get_agent_model, DEFAULT_MODEL
+    assert resolve_model_name("pro") == "antigravity/gemini-3.7-flash-tiered"
+    assert resolve_model_name("flash") == "antigravity/gemini-3.7-flash-tiered"
+    assert resolve_model_name("auto/best-fast") == "antigravity/gemini-3.7-flash-tiered"
+    assert get_agent_model("prototype_maker") == "antigravity/gemini-3.7-flash-tiered"
+    assert DEFAULT_MODEL == "antigravity/gemini-3.7-flash-tiered"
+
+    models_res = client.get("/api/agent/models", headers=admin_headers)
+    assert models_res.status_code == 200
+    models_data = models_res.json()
+    assert models_data["status"] == "success"
+    assert models_data["total_models"] > 0
+    print(f"[PASS] 25. OmniRoute model resolution & catalog API verified ({models_data['total_models']} models)")
+
+    # 26. Master Orchestrator Cockpit State & Inbound WhatsApp Inquiry Staging
+    cockpit_res = client.get("/api/orchestrator/cockpit", headers=admin_headers)
+    assert cockpit_res.status_code == 200
+    cockpit_data = cockpit_res.json()
+    assert "pending_actions" in cockpit_data
+    assert "workers" in cockpit_data
+
+    from backend.ai.master_orchestrator import master_orchestrator
+    wa_inbound_res = master_orchestrator.handle_inbound_whatsapp_message(
+        lead_id=man_lead_id,
+        message_text="Hi, can you share the pricing and demo prototype for our logistics dispatch?"
+    )
+    assert wa_inbound_res["status"] == "logged"
+    print(f"[PASS] 26. Master Orchestrator cockpit overview & inbound WhatsApp auto-staging verified")
+
+    # 27. Agent Job Dispatch with Immediate Cloud OmniRoute Target
+    job_payload = {
+        "prompt": "Synthesize a 1-page operational proposal for @lead.profile",
+        "agent_slug": "lead_researcher",
+        "execution_target": "cloud",
+        "force": True
+    }
+    job_res = client.post(f"/api/leads/{man_lead_id}/agent/jobs", json=job_payload, headers=admin_headers)
+    assert job_res.status_code == 200
+    job_data = job_res.json()
+    assert job_data["lead_id"] == man_lead_id
+    assert job_data["agent_slug"] == "lead_researcher"
+    print(f"[PASS] 27. Immediate cloud agent job dispatched successfully (Job ID: {job_data['id']})")
+
+
+    print("\nALL 27 TESTS PASSED PERFECTLY!")
+
+def test_backend_suite():
+    run_tests()
 
 if __name__ == "__main__":
     run_tests()
+
 

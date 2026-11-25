@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- shadcn/ui Zinc Dark Palette (Matching COS Theta CRM) -->
+    <color name="header_dark">#09090B</color>
+    <color name="header_surface">#18181B</color>
+    <color name="primary">#FAFAFA</color>
+    <color name="primary_dark">#E4E4E7</color>
+    <color name="primary_soft">#27272A</color>
+    <color name="accent">#3B82F6</color>
+    <color name="background">#09090B</color>
+    <color name="card_bg">#121215</color>
+    <color name="card_stroke">#27272A</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#FAFAFA</color>
+    <color name="text_secondary">#A1A1AA</color>
+    <color name="text_hint">#71717A</color>
+
+    <!-- Semantic Status & Actions -->
+    <color name="call_green">#22C55E</color>
+    <color name="call_green_soft">#052E16</color>
+    <color name="call_red">#EF4444</color>
+    <color name="call_red_soft">#450A0A</color>
+    <color name="drive_blue">#60A5FA</color>
+    <color name="keypad_btn_bg">#18181B</color>
+    <color name="keypad_btn_text">#FAFAFA</color>
+    <color name="keypad_btn_stroke">#27272A</color>
+    <color name="nav_bg">#0D0D10</color>
+    <color name="nav_selected">#27272A</color>
+</resources>

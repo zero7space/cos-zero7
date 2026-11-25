@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Zero7 CRM - WhatsApp Desktop Sync Agent
  * ========================================
  * Manages multiple Baileys sessions (WhatsApp Web connections) and syncs
@@ -285,8 +285,8 @@ async function startSession(account) {
         auth: state,
         printQRInTerminal: false,
         logger: pino({ level: 'silent' }),
-        browser: ['Zero7 CRM Sync', 'Desktop', '1.0.0'],
-        syncFullHistory: false,
+        browser: ['Chrome (Windows)', 'Desktop', '120.0.0'],
+        syncFullHistory: true,
         markOnlineOnConnect: false,
         generateHighQualityLinkPreview: false,
         getMessage: async () => undefined

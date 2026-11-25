@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <!-- Minimalist Top Header (shadcn Zinc Dark) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_dark"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Title & User Subtitle -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAppTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Zero7 Calling"
+                    android:textColor="@color/text_primary"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="-0.01" />
+
+                <TextView
+                    android:id="@+id/tvUserSession"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CRM Call Sync • Online"
+                    android:textColor="@color/text_hint"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Agent-Style Online Status Pill -->
+            <TextView
+                android:id="@+id/tvRecorderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_pill_subtle"
+                android:paddingHorizontal="9dp"
+                android:paddingVertical="4dp"
+                android:text="● Ready"
+                android:textColor="@color/call_green"
+                android:textSize="10.5sp"
+                android:textStyle="bold" />
+
+            <!-- Exception Icon Button -->
+            <ImageButton
+                android:id="@+id/btnExceptionList"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:contentDescription="Exception List"
+                app:tint="@color/text_secondary" />
+
+            <!-- Settings Icon Button -->
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="2dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_preferences"
+                android:contentDescription="Settings"
+                app:tint="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Sub-header Exception Bar (Clean Hairline Surface) -->
+        <LinearLayout
+            android:id="@+id/bannerExceptionInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_pill_subtle"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvExceptionCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🚫 Exception List: 0 excluded"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage ❯"
+                android:textColor="@color/accent"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Hairline Separator -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/card_stroke" />
+
+    <!-- ================================================================== -->
+    <!-- TAB 1: DIALER VIEW                                                 -->
+    <!-- ================================================================== -->
+    <ScrollView
+        android:id="@+id/tabContainerDialer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp">
+
+            <!-- Compact Mode Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardModeToggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/card_bg">
+
+                <LinearLayout
+                    android:id="@+id/layoutModeToggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="9dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvModeIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🟢"
+                        android:textSize="15sp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvModeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CALLING MODE ACTIVE"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvModeSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Auto-recording calls &amp; syncing to CRM."
+                            android:textColor="@color/text_hint"
+                            android:textSize="10.5sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnModeAction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_pill_subtle"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="PAUSE"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Minimalist Dialer Surface -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/card_bg">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="14dp">
+
+                    <!-- Number Input Display Box -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input_field"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="12dp"
+                        android:gravity="center_vertical">
+
+                        <EditText
+                            android:id="@+id/etPhoneNumber"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:hint="Enter phone number"
+                            android:inputType="phone"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_hint"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/btnBackspace"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Backspace"
+                            android:src="@android:drawable/ic_input_delete"
+                            app:tint="@color/text_secondary" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <!-- Sleek 4x3 Keypad -->
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="*">
+
+                        <TableRow android:layout_marginBottom="5dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn1"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="1"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn2"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="2"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn3"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="3"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+                        </TableRow>
+
+                        <TableRow android:layout_marginBottom="5dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn4"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="4"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn5"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="5"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn6"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="6"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+                        </TableRow>
+
+                        <TableRow android:layout_marginBottom="5dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn7"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="7"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn8"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="8"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn9"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="9"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+                        </TableRow>
+
+                        <TableRow>
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnStar"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="*"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn0"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="0"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnHash"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_height="52dp"
+                                android:layout_marginHorizontal="3dp"
+                                android:text="#"
+                                android:textColor="@color/text_primary"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/header_surface"
+                                app:cornerRadius="10dp"
+                                app:strokeColor="@color/card_stroke"
+                                app:strokeWidth="1dp" />
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <!-- Call Action Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCall"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:text="📞  Call"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/call_green"
+                        app:cornerRadius="10dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ================================================================== -->
+    <!-- TAB 2: RECORDINGS & STATS VIEW                                     -->
+    <!-- ================================================================== -->
+    <LinearLayout
+        android:id="@+id/tabContainerRecordings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Metric Summary Card (shadcn 3-metric row) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/card_bg">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="6dp"
+                android:baselineAligned="false">
+
+                <!-- Metric 1: Total Calls -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStatTotalCalls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="TOTAL CALLS"
+                        android:textColor="@color/text_hint"
+                        android:textSize="9.5sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/card_stroke" />
+
+                <!-- Metric 2: Synced to CRM -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStatUploaded"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/call_green"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="CRM SYNCED"
+                        android:textColor="@color/text_hint"
+                        android:textSize="9.5sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/card_stroke" />
+
+                <!-- Metric 3: Total Talk Time -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStatDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0m 0s"
+                        android:textColor="@color/drive_blue"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="TALK TIME"
+                        android:textColor="@color/text_hint"
+                        android:textSize="9.5sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Search Box + Segmented Filter Pills -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingBottom="6dp">
+
+            <!-- Search Card -->
+            <EditText
+                android:id="@+id/etSearchCalls"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_input_field"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="8dp"
+                android:hint="Search calls..."
+                android:inputType="text"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:textSize="12.5sp" />
+
+            <!-- Filter Switcher Row (Mail Alias Switcher Style) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/chipFilterAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_subtle"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="All"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/chipFilterUploaded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_subtle"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="Synced"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/chipFilterPending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_subtle"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="Pending"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tvCallCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 calls"
+                    android:textColor="@color/text_hint"
+                    android:textSize="11.5sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Empty State View -->
+        <LinearLayout
+            android:id="@+id/emptyStateRecordings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📞"
+                android:textSize="32sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No Call Records Yet"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Dial numbers from the keypad — recordings automatically sync to CRM."
+                android:textColor="@color/text_hint"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Calls & Recordings RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCalls"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingHorizontal="14dp"
+            android:paddingBottom="12dp" />
+
+    </LinearLayout>
+
+    <!-- Hairline Separator above Bottom Nav -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/card_stroke" />
+
+    <!-- ================================================================== -->
+    <!-- DOCKED MINIMALIST BOTTOM NAVIGATION BAR                             -->
+    <!-- ================================================================== -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/header_dark">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="5dp"
+            android:baselineAligned="false">
+
+            <!-- Bottom Tab 1: Dialer -->
+            <LinearLayout
+                android:id="@+id/navTabDialer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/bg_pill_subtle"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/ivNavDialer"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@android:drawable/ic_menu_call"
+                    app:tint="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvNavDialer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Dialer"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Bottom Tab 2: Recordings -->
+            <LinearLayout
+                android:id="@+id/navTabRecordings"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="4dp"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/ivNavRecordings"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    app:tint="@color/text_hint" />
+
+                <TextView
+                    android:id="@+id/tvNavRecordings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Calls"
+                    android:textColor="@color/text_hint"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvNavRecordingsBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/bg_pill_subtle"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="1dp"
+                    android:text="0"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9.5sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
